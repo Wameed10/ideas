@@ -1,0 +1,4211 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Graduation Vault | Wameed Alaa El-Dein</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+
+        tailwind.config = {
+
+            darkMode: 'class',
+
+            theme: {
+
+                extend: {
+
+                    colors: {
+                        boyBlue: '#2563eb',
+                        girlPink: '#be123c'
+                    },
+
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif']
+                    }
+
+                }
+
+            }
+
+        };
+
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+    <style>
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .dark body {
+            background-color: #080c14;
+            color: #f8fafc;
+
+            background-image:
+                radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.10) 0px, transparent 50%);
+
+            background-attachment: fixed;
+        }
+
+        .light body {
+            background-color: #f1f5f9;
+            color: #0f172a;
+
+            background-image:
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.10) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+
+            background-attachment: fixed;
+        }
+
+        .glass-card {
+            transition: all 0.3s ease;
+        }
+
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .light .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(203, 213, 225, 0.8);
+            box-shadow: 0 10px 25px -5px rgba(148, 163, 184, 0.15);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #64748b;
+            border-radius: 99px;
+        }
+
+        .boy-opt {
+            color: #2563eb !important;
+            font-weight: 700 !important;
+            background-color: #ffffff;
+        }
+
+        .girl-opt {
+            color: #be123c !important;
+            font-weight: 700 !important;
+            background-color: #ffffff;
+        }
+
+        .dark .boy-opt,
+        .dark .girl-opt {
+            background-color: #0f172a !important;
+        }
+
+        /* TOP IDEA TOOLTIP */
+
+        #stat-top-voted-box {
+            position: relative;
+            z-index: 30;
+        }
+
+        #topIdeaTooltip {
+            z-index: 30 !important;
+        }
+
+        #topIdeaTooltip::before {
+            content: "";
+            position: absolute;
+            top: -6px;
+            right: 28px;
+            width: 12px;
+            height: 12px;
+            background: inherit;
+            border-left: 1px solid rgba(100, 116, 139, 0.55);
+            border-top: 1px solid rgba(100, 116, 139, 0.55);
+            transform: rotate(45deg);
+        }
+
+        /* ================= MOBILE RESPONSIVE ONLY ================= */
+        @media (max-width: 640px) {
+
+            html, body {
+                width: 100%;
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+
+            body {
+                min-width: 0;
+            }
+
+            header {
+                position: sticky;
+            }
+
+            header > div {
+                height: auto;
+                min-height: 72px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                gap: 8px;
+            }
+
+            header > div > div:first-child {
+                min-width: 0;
+                flex: 1;
+            }
+
+            header h1 {
+                font-size: 1rem !important;
+                line-height: 1.35;
+                white-space: nowrap;
+            }
+
+            header p {
+                font-size: 8px !important;
+                white-space: nowrap;
+            }
+
+            header p span:nth-child(2) {
+                max-width: 125px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            header .w-12.h-12 {
+                width: 42px !important;
+                height: 42px !important;
+                min-width: 42px;
+                border-radius: 14px;
+            }
+
+            header .w-12.h-12 i {
+                font-size: 1.15rem !important;
+            }
+
+            header > div > div:last-child {
+                flex-shrink: 0;
+                gap: 5px;
+            }
+
+            header #activeUserNameText,
+            header .text-right {
+                display: none !important;
+            }
+
+            header button {
+                min-width: 42px;
+                min-height: 42px;
+            }
+
+            header button.p-3 {
+                padding: 10px !important;
+            }
+
+            main {
+                width: 100%;
+                max-width: 100%;
+                padding: 16px 12px 24px !important;
+                gap: 18px !important;
+            }
+
+            main > section:first-child {
+                gap: 10px !important;
+            }
+
+            main > section:first-child > div {
+                padding: 14px !important;
+                min-width: 0;
+            }
+
+            main > section:first-child .w-12.h-12 {
+                width: 42px !important;
+                height: 42px !important;
+                min-width: 42px;
+            }
+
+            main > section:first-child span,
+            main > section:first-child p {
+                overflow-wrap: anywhere;
+            }
+
+            #stat-top-voted-box {
+                z-index: 31;
+            }
+
+            #topIdeaTooltip {
+                position: absolute;
+                right: 0;
+                left: auto;
+                width: min(320px, calc(100vw - 24px));
+                max-width: calc(100vw - 24px);
+                z-index: 100 !important;
+            }
+
+            .grid.grid-cols-1.lg\:grid-cols-3 {
+                display: flex;
+                flex-direction: column;
+                gap: 16px !important;
+            }
+
+            #idea-form-section {
+                width: 100%;
+                position: static !important;
+                top: auto !important;
+                padding: 16px !important;
+            }
+
+            #idea-form-section textarea {
+                min-height: 120px;
+            }
+
+            #idea-form-section .pt-2.flex {
+                flex-direction: column;
+            }
+
+            #idea-form-section #cancelEditBtn {
+                width: 100%;
+            }
+
+            section.lg\:col-span-2 {
+                width: 100%;
+            }
+
+            section.lg\:col-span-2 > .glass-card {
+                padding: 12px !important;
+                gap: 10px !important;
+                align-items: stretch !important;
+            }
+
+            section.lg\:col-span-2 > .glass-card > div:first-child {
+                width: 100% !important;
+            }
+
+            section.lg\:col-span-2 > .glass-card > div:last-child {
+                width: 100% !important;
+                justify-content: stretch !important;
+            }
+
+            section.lg\:col-span-2 > .glass-card > div:last-child > div {
+                width: 100%;
+                max-width: 100%;
+                overflow-x: auto;
+                justify-content: flex-start;
+                scrollbar-width: none;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            section.lg\:col-span-2 > .glass-card > div:last-child > div::-webkit-scrollbar {
+                display: none;
+            }
+
+            section.lg\:col-span-2 > .glass-card button {
+                flex: 0 0 auto;
+                white-space: nowrap;
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+            }
+
+            #ideasGrid {
+                width: 100%;
+            }
+
+            #ideasGrid > * {
+                min-width: 0;
+                max-width: 100%;
+            }
+
+            #emptyState {
+                padding: 32px 18px !important;
+            }
+
+            footer {
+                padding: 18px 12px !important;
+                font-size: 10px !important;
+            }
+
+            #loginModal,
+            #votersModal {
+                padding: 12px !important;
+            }
+
+            #loginModal > div,
+            #votersModal > div {
+                width: 100%;
+                max-width: 100%;
+                max-height: calc(100dvh - 24px);
+                overflow-y: auto;
+                padding: 18px !important;
+                border-radius: 24px;
+            }
+
+            #loginModal select,
+            #loginModal input {
+                font-size: 14px;
+            }
+
+            #toast-container {
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+            }
+
+            #toast-container > * {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 380px) {
+
+            header > div {
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+            }
+
+            header h1 {
+                font-size: 0.9rem !important;
+            }
+
+            header .w-12.h-12 {
+                width: 38px !important;
+                height: 38px !important;
+                min-width: 38px;
+            }
+
+            main {
+                padding-left: 8px !important;
+                padding-right: 8px !important;
+            }
+
+            main > section:first-child > div {
+                padding: 12px !important;
+            }
+
+            #idea-form-section {
+                padding: 14px !important;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body class="min-h-screen flex flex-col">
+
+
+<!-- ================= HEADER ================= -->
+
+<header class="sticky top-0 z-40 border-b dark:border-slate-800/80 light:border-slate-200 dark:bg-slate-950/80 light:bg-white/90 backdrop-blur-xl transition-colors">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+
+        <div class="flex items-center gap-3">
+
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-emerald-500 flex items-center justify-center text-white shadow-lg shadow-violet-500/20 ring-1 ring-white/20">
+
+                <i class="fa-solid fa-brain text-2xl"></i>
+
+            </div>
+
+            <div>
+
+                <h1 class="text-xl sm:text-2xl font-black bg-gradient-to-r from-violet-600 via-indigo-600 to-emerald-500 bg-clip-text text-transparent">
+
+                    AI Graduation Vault
+
+                </h1>
+
+                <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1">
+
+                    <span>إعداد وتطوير:</span>
+
+                    <span class="text-amber-500 dark:text-amber-400 font-black flex items-center gap-1">
+
+                        Wameed Alaa El-Dein
+
+                        <i class="fa-solid fa-crown text-[11px] text-amber-400"></i>
+
+                    </span>
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="flex items-center gap-2 sm:gap-3">
+
+
+            <!-- ADMIN -->
+
+            <div id="adminControlsGroup"
+                 class="hidden items-center gap-2">
+
+                <button onclick="confirmResetIdeas()"
+                        class="flex items-center gap-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 px-3 py-2 rounded-2xl border border-rose-500/20 transition text-xs font-bold">
+
+                    <i class="fa-solid fa-trash-arrow-up"></i>
+
+                    <span class="hidden md:inline">
+                        ضبط الأفكار
+                    </span>
+
+                </button>
+
+
+                <button onclick="confirmResetAccounts()"
+                        class="flex items-center gap-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-3 py-2 rounded-2xl border border-amber-500/20 transition text-xs font-bold">
+
+                    <i class="fa-solid fa-user-gear"></i>
+
+                    <span class="hidden md:inline">
+                        تصفير الحسابات
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <!-- USER -->
+
+            <button onclick="openLoginModal(false)"
+                    class="flex items-center gap-2 bg-slate-200/80 dark:bg-slate-900 hover:bg-slate-300 dark:hover:bg-slate-800 p-2 sm:px-3 sm:py-2 rounded-2xl border border-slate-300 dark:border-slate-800 transition">
+
+                <span id="activeUserBadgeIcon">
+                    👨‍💻
+                </span>
+
+                <div class="text-right hidden sm:block">
+
+                    <span class="block text-[10px] text-slate-500 dark:text-slate-400 font-semibold">
+                        الحساب الحالي:
+                    </span>
+
+                    <span id="activeUserNameText"
+                          class="text-xs font-black text-violet-600 dark:text-violet-400">
+                        غير مسجل
+                    </span>
+
+                </div>
+
+                <i class="fa-solid fa-arrows-rotate text-xs text-slate-400 mr-1"></i>
+
+            </button>
+
+
+            <!-- THEME -->
+
+            <button id="theme-toggle"
+                    onclick="toggleAppTheme()"
+                    class="p-3 rounded-2xl bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:scale-105 transition border border-slate-300 dark:border-slate-700">
+
+                <i class="fa-solid fa-moon text-lg dark:hidden text-indigo-600"></i>
+
+                <i class="fa-solid fa-sun text-lg hidden dark:block text-amber-400"></i>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+
+    <!-- STATISTICS -->
+
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+
+        <!-- TOTAL -->
+
+        <div class="glass-card p-5 rounded-3xl flex items-center gap-4">
+
+            <div class="w-12 h-12 bg-violet-500/10 text-violet-600 dark:text-violet-400 rounded-2xl flex items-center justify-center text-xl border border-violet-500/20 shrink-0">
+
+                <i class="fa-solid fa-lightbulb"></i>
+
+            </div>
+
+            <div>
+
+                <span class="block text-xs font-bold text-slate-500 dark:text-slate-400">
+                    إجمالي الأفكار المقترحة
+                </span>
+
+                <span id="stat-total"
+                      class="text-2xl font-black text-slate-900 dark:text-slate-100">
+                    0
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- TOP VOTED -->
+
+        <div id="stat-top-voted-box"
+             class="relative group">
+
+            <div id="stat-top-voted-card"
+                 class="glass-card p-5 rounded-3xl flex items-center gap-4 md:col-span-1 relative">
+
+                <div class="w-12 h-12 bg-violet-500/10 text-violet-500 rounded-2xl flex items-center justify-center text-xl border border-violet-500/20 shrink-0">
+
+                    <i class="fa-solid fa-trophy"></i>
+
+                </div>
+
+                <div class="min-w-0 flex-1">
+
+                    <span class="block text-xs font-bold text-slate-500 dark:text-slate-400">
+                        الأعلى تصويتاً
+                    </span>
+
+                    <p id="stat-top-title"
+                       class="mt-0.5 text-sm font-black text-slate-900 dark:text-slate-100 truncate cursor-help hover:text-violet-500 transition">
+
+                        لا توجد تصويتات بعد
+
+                    </p>
+
+                    <div class="flex items-center gap-2 mt-1">
+
+                        <span id="stat-top-author"
+                              class="text-[11px] font-bold text-violet-600 dark:text-violet-400">
+                        </span>
+
+                        <span id="stat-top-count"
+                              class="text-[10px] bg-violet-500/10 text-violet-600 dark:text-violet-400 font-extrabold px-2 py-0.5 rounded-full border border-violet-500/20">
+
+                            0 أصوات
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div id="topIdeaTooltip"
+                 class="absolute right-0 top-full mt-3 hidden group-hover:block z-30 w-[min(360px,calc(100vw-3rem))] p-4 bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-xl text-white text-xs rounded-2xl shadow-2xl font-bold border border-slate-700/80 text-right pointer-events-none">
+
+                <div class="flex items-start gap-2.5">
+
+                    <div class="w-8 h-8 rounded-xl bg-violet-500/15 text-violet-300 flex items-center justify-center shrink-0">
+
+                        <i class="fa-solid fa-lightbulb"></i>
+
+                    </div>
+
+                    <div class="min-w-0">
+
+                        <span class="block text-[10px] text-violet-300 mb-1">
+                            الفكرة الأعلى تصويتاً
+                        </span>
+
+                        <span id="tooltipText"
+                              class="block leading-6 break-words">
+                            لا توجد تفاصيل
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CONTRIBUTORS -->
+
+        <div class="glass-card p-5 rounded-3xl flex items-center gap-4">
+
+            <div class="w-12 h-12 bg-emerald-500/10 text-emerald-500 rounded-2xl flex items-center justify-center text-xl border border-emerald-500/20 shrink-0">
+
+                <i class="fa-solid fa-award"></i>
+
+            </div>
+
+            <div class="min-w-0 flex-1">
+
+                <span class="block text-xs font-bold text-slate-500 dark:text-slate-400">
+                    أكثر الأعضاء مشاركة
+                </span>
+
+                <div id="stat-top-contributors-list"
+                     class="mt-1 flex flex-wrap items-center gap-1.5">
+
+                    <span class="text-sm font-black text-slate-800 dark:text-slate-200">
+                        -
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- MAIN GRID -->
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+
+
+        <!-- FORM -->
+
+        <section id="idea-form-section"
+                 class="lg:col-span-1 glass-card p-6 rounded-3xl border dark:border-slate-800/80 light:border-slate-300 sticky top-28">
+
+            <div class="flex items-center gap-2 mb-6 border-b pb-4 dark:border-slate-800 light:border-slate-200">
+
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-md">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                </div>
+
+                <div>
+
+                    <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">
+                        إضافة فكرة جديدة
+                    </h2>
+
+                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                        سجل فكرتك ليصوت عليها أفراد التيم
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form id="ideaForm"
+                  onsubmit="handleFormSubmit(event)"
+                  class="space-y-4">
+
+
+                <input type="hidden"
+                       id="ideaId">
+
+
+                <div>
+
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
+
+                        <i class="fa-solid fa-user-astronaut text-violet-500 ml-1"></i>
+
+                        صاحب الفكرة (حسابك الحالي) *
+
+                    </label>
+
+                    <div class="relative">
+
+                        <input type="text"
+                               id="authorName"
+                               readonly
+                               required
+                               class="w-full bg-slate-200/70 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700/80 rounded-2xl px-4 py-3 text-sm text-slate-900 dark:text-slate-100 font-extrabold cursor-not-allowed select-none opacity-90 shadow-inner">
+
+                        <i class="fa-solid fa-lock absolute left-4 top-3.5 text-slate-400 text-xs"></i>
+
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
+
+                        <i class="fa-solid fa-heading text-violet-500 ml-1"></i>
+
+                        عنوان الفكرة / المشروع *
+
+                    </label>
+
+                    <input type="text"
+                           id="ideaTitle"
+                           required
+                           placeholder="عنوان الفكرة..."
+                           class="w-full bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-2xl px-4 py-3 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition font-semibold">
+
+                </div>
+
+
+                <div>
+
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
+
+                        <i class="fa-solid fa-align-right text-violet-500 ml-1"></i>
+
+                        وصف تفصيلي *
+
+                    </label>
+
+                    <textarea id="ideaDescription"
+                              rows="5"
+                              required
+                              placeholder="شرح تفاصيل الفكرة الخوارزميات المقترحة والتطبيقات..."
+                              class="w-full bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-2xl px-4 py-3 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition resize-none custom-scrollbar font-medium"></textarea>
+
+                </div>
+
+
+                <div class="pt-2 flex gap-2">
+
+                    <button type="submit"
+                            id="submitBtn"
+                            class="flex-1 bg-gradient-to-r from-violet-600 via-indigo-600 to-emerald-600 hover:opacity-95 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-violet-500/25 active:scale-95 transition-all flex items-center justify-center gap-2">
+
+                        <i class="fa-solid fa-paper-plane text-sm"></i>
+
+                        <span id="btnText">
+                            حفظ الفكرة
+                        </span>
+
+                    </button>
+
+
+                    <button type="button"
+                            id="cancelEditBtn"
+                            onclick="resetForm()"
+                            class="hidden bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-4 py-3.5 rounded-2xl hover:bg-slate-300 dark:hover:bg-slate-700 transition font-bold text-xs">
+
+                        إلغاء
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+
+        <!-- FEED -->
+
+        <section class="lg:col-span-2 space-y-6">
+
+
+            <!-- SEARCH -->
+
+            <div class="glass-card p-4 rounded-3xl border dark:border-slate-800/80 light:border-slate-300 flex flex-col sm:flex-row gap-4 items-center justify-between">
+
+                <div class="relative w-full sm:w-1/2">
+
+                    <i class="fa-solid fa-magnifying-glass absolute right-4 top-3.5 text-slate-400 text-sm"></i>
+
+                    <input type="text"
+                           id="searchInput"
+                           oninput="renderIdeas()"
+                           placeholder="بحث بعنوان، صاحب الفكرة..."
+                           class="w-full pr-11 pl-4 py-2.5 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500">
+
+                </div>
+
+
+                <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-center">
+
+                    <div class="flex items-center gap-1.5 bg-slate-200/80 dark:bg-slate-900 p-1 rounded-2xl border border-slate-300 dark:border-slate-800 text-xs">
+
+                        <button onclick="setSortMode('newest')"
+                                id="sort-newest"
+                                class="px-4 py-2 rounded-xl bg-violet-600 text-white font-bold transition">
+
+                            الأحدث
+
+                        </button>
+
+                        <button onclick="setSortMode('votes')"
+                                id="sort-votes"
+                                class="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-400 font-bold transition">
+
+                            <i class="fa-solid fa-ranking-star ml-1"></i>
+
+                            الأعلى تصويتاً
+
+                        </button>
+
+                        <button onclick="setSortMode('ai')"
+                                id="sort-ai"
+                                class="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-400 font-bold transition">
+
+                            <i class="fa-solid fa-robot ml-1"></i>
+
+                            الأعلى توافقاً مع AI
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div id="ideasGrid"
+                 class="grid grid-cols-1 gap-5">
+            </div>
+
+
+            <div id="emptyState"
+                 class="hidden glass-card p-12 text-center rounded-3xl border dark:border-slate-800/80 light:border-slate-300">
+
+                <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800/80 rounded-3xl flex items-center justify-center mx-auto mb-4 text-slate-400">
+
+                    <i class="fa-solid fa-inbox text-3xl"></i>
+
+                </div>
+
+                <h3 class="text-base font-bold text-slate-800 dark:text-slate-200 mb-1">
+
+                    لا توجد أفكار مسجلة هنا بعد!
+
+                </h3>
+
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+
+                    سجّل دخولك وأضف الفكرة الأولى للتيم.
+
+                </p>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+
+<!-- FOOTER -->
+
+<footer class="mt-auto border-t dark:border-slate-800/80 light:border-slate-200 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+
+    <p class="font-bold text-slate-500 dark:text-slate-400">
+
+        منصة أفكار مشروع التخرج - قسم الذكاء الاصطناعي 🚀
+
+    </p>
+
+</footer>
+
+
+
+<!-- LOGIN -->
+
+<div id="loginModal"
+     class="fixed inset-0 z-50 bg-black/85 backdrop-blur-xl flex items-center justify-center p-4">
+
+    <div class="glass-card max-w-sm w-full p-6 sm:p-8 rounded-3xl border dark:border-slate-800 light:border-slate-200 shadow-2xl space-y-5">
+
+        <div class="text-center space-y-2">
+
+            <div class="w-14 h-14 bg-gradient-to-tr from-violet-600 to-indigo-600 text-white rounded-2xl flex items-center justify-center mx-auto text-2xl shadow-lg shadow-violet-500/30">
+
+                <i class="fa-solid fa-user-lock"></i>
+
+            </div>
+
+            <h3 class="text-lg font-black text-slate-900 dark:text-slate-100">
+                تسجيل الدخول للمنصة
+            </h3>
+
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+
+                اختر اسمك وادخل رمز PIN الخاص بك لتتمكن من التفاعل
+
+            </p>
+
+        </div>
+
+
+        <div class="space-y-4">
+
+
+            <div>
+
+                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+
+                    اختر اسمك من القائمة:
+
+                </label>
+
+                <select id="loginUserSelect"
+                        onchange="handleMemberSelectChange()"
+                        class="w-full bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl px-4 py-3 text-sm font-bold text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-violet-500 cursor-pointer">
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <label id="pinLabel"
+                       class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+
+                    رمز PIN الخاص بك:
+
+                </label>
+
+                <input type="password"
+                       id="loginPinInput"
+                       maxlength="12"
+                       placeholder="ادخل الرمز..."
+                       class="w-full bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl px-4 py-3 text-center text-lg font-bold tracking-widest text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-violet-500">
+
+                <span id="pinHelpText"
+                      class="block text-[11px] mt-1.5 text-center font-bold">
+                </span>
+
+            </div>
+
+
+            <button onclick="confirmLogin()"
+                    class="w-full py-3.5 bg-gradient-to-r from-violet-600 via-indigo-600 to-emerald-600 hover:opacity-90 text-white font-bold text-sm rounded-2xl shadow-lg shadow-violet-500/25 transition">
+
+                تأكيد الدخول والبدء 🚀
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- VOTERS -->
+
+<div id="votersModal"
+     class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md hidden items-center justify-center p-4">
+
+    <div class="glass-card max-w-sm w-full p-6 rounded-3xl border dark:border-slate-800 light:border-slate-200 shadow-2xl space-y-4">
+
+        <div class="flex items-center justify-between border-b dark:border-slate-800 light:border-slate-200 pb-3">
+
+            <h4 class="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+
+                <i class="fa-solid fa-thumbs-up text-violet-500"></i>
+
+                المصوّتون على هذه الفكرة
+
+            </h4>
+
+            <button onclick="closeVotersModal()"
+                    class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+
+                <i class="fa-solid fa-xmark text-lg"></i>
+
+            </button>
+
+        </div>
+
+
+        <div id="votersListContainer"
+             class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar">
+        </div>
+
+
+        <button onclick="closeVotersModal()"
+                class="w-full py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl hover:bg-slate-300 dark:hover:bg-slate-700 transition">
+
+            إغلاق
+
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- TOAST -->
+
+<div id="toast-container"
+     class="fixed bottom-5 left-5 z-50 flex flex-col gap-2">
+</div>
+
+
+
+<script>
+
+/* =========================================================
+   SUPABASE
+   ========================================================= */
+
+const SUPABASE_URL =
+    "https://hgqhyvuhptkqoamwwbiu.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_EuKlXeJ6ZEHjp5Hw8y3xgQ_5qm-6Ucj";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =========================================================
+   TEAM
+   ========================================================= */
+
+const teamMembers = [
+
+    {
+        name: "Wameed",
+        gender: "boy",
+        icon: "👨‍💻"
+    },
+
+    {
+        name: "Marwan",
+        gender: "boy",
+        icon: "👨‍💻"
+    },
+
+    {
+        name: "Omar",
+        gender: "boy",
+        icon: "👨‍💻"
+    },
+
+    {
+        name: "Roshdi",
+        gender: "boy",
+        icon: "👨‍💻"
+    },
+
+    {
+        name: "Mosab",
+        gender: "boy",
+        icon: "👨‍💻"
+    },
+
+    {
+        name: "Habiba",
+        gender: "girl",
+        icon: "👩‍💻"
+    },
+
+    {
+        name: "Sara Maged",
+        gender: "girl",
+        icon: "👩‍💻"
+    },
+
+    {
+        name: "Sara Omil",
+        gender: "girl",
+        icon: "👩‍💻"
+    },
+
+    {
+        name: "Sandy",
+        gender: "girl",
+        icon: "👩‍💻"
+    },
+
+    {
+        name: "Merolla",
+        gender: "girl",
+        icon: "👩‍💻"
+    }
+
+];
+
+
+/* =========================================================
+   VARIABLES
+   ========================================================= */
+
+let ideas = [];
+
+let memberPins = {};
+
+let currentSort = 'newest';
+
+let currentUser = null;
+
+let realtimeChannel = null;
+
+
+/* =========================================================
+   INITIALIZATION
+   ========================================================= */
+
+window.onload = async function () {
+
+    initializeTheme();
+
+    populateLoginSelect();
+
+    await loadMemberPins();
+
+    await loadIdeas();
+
+    const savedUser =
+        localStorage.getItem('authenticated_user');
+
+    if (
+        savedUser &&
+        teamMembers.some(
+            m => m.name === savedUser
+        )
+    ) {
+
+        currentUser = savedUser;
+
+    }
+
+    updateUserBadge();
+
+    renderIdeas();
+
+    updateStats();
+
+    subscribeToRealtime();
+
+    if (!currentUser) {
+
+        openLoginModal(true);
+
+    }
+
+};
+
+
+/* =========================================================
+   LOAD IDEAS
+   ========================================================= */
+
+async function loadIdeas() {
+
+    try {
+
+        const { data, error } =
+            await supabaseClient
+                .from('ideas')
+                .select(`
+                    id,
+                    title,
+                    description,
+                    created_at,
+                    updated_at,
+                    author_id,
+                    team_members (
+                        name
+                    )
+                `)
+                .order(
+                    'created_at',
+                    {
+                        ascending: false
+                    }
+                );
+
+
+        if (error) {
+
+            console.error(error);
+
+            showToast(
+                'حدث خطأ أثناء تحميل الأفكار من قاعدة البيانات',
+                'error'
+            );
+
+            ideas = [];
+
+            return;
+
+        }
+
+
+        const ideaIds =
+            data.map(
+                idea => idea.id
+            );
+
+
+        let votes = [];
+
+
+        if (ideaIds.length > 0) {
+
+            const {
+                data: votesData,
+                error: votesError
+            } =
+                await supabaseClient
+                    .from('votes')
+                    .select(`
+                        idea_id,
+                        voter_id,
+                        team_members (
+                            name
+                        )
+                    `)
+                    .in(
+                        'idea_id',
+                        ideaIds
+                    );
+
+
+            if (votesError) {
+
+                console.error(votesError);
+
+            } else {
+
+                votes =
+                    votesData || [];
+
+            }
+
+        }
+
+
+        ideas =
+            data.map(idea => {
+
+                const ideaVotes =
+                    votes.filter(
+                        vote =>
+                            vote.idea_id === idea.id
+                    );
+
+
+                return {
+
+                    id: idea.id,
+
+                    author:
+                        idea.team_members?.name ||
+                        'Unknown',
+
+                    title:
+                        idea.title,
+
+                    description:
+                        idea.description,
+
+                    voters:
+                        ideaVotes
+                            .map(
+                                vote =>
+                                    vote.team_members?.name
+                            )
+                            .filter(Boolean),
+
+                    createdAt:
+                        idea.created_at
+
+                };
+
+            });
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showToast(
+            'تعذر الاتصال بقاعدة البيانات',
+            'error'
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   LOAD MEMBER PINS
+   ========================================================= */
+
+async function loadMemberPins() {
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from('member_pins')
+                .select(`
+                    member_id,
+                    pin_hash,
+                    team_members (
+                        name
+                    )
+                `);
+
+
+        if (error) {
+
+            console.error(error);
+
+            memberPins = {};
+
+            return;
+
+        }
+
+
+        memberPins = {};
+
+
+        (data || []).forEach(row => {
+
+            if (
+                row.team_members &&
+                row.team_members.name
+            ) {
+
+                memberPins[
+                    row.team_members.name
+                ] =
+                    row.pin_hash;
+
+            }
+
+        });
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        memberPins = {};
+
+    }
+
+}
+
+
+/* =========================================================
+   REALTIME
+   ========================================================= */
+
+function subscribeToRealtime() {
+
+    if (realtimeChannel) {
+
+        supabaseClient.removeChannel(
+            realtimeChannel
+        );
+
+    }
+
+
+    realtimeChannel =
+        supabaseClient
+            .channel('graduation-vault-realtime')
+
+
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'ideas'
+                },
+                async () => {
+
+                    await refreshFromDatabase();
+
+                }
+            )
+
+
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'votes'
+                },
+                async () => {
+
+                    await refreshFromDatabase();
+
+                }
+            )
+
+
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'member_pins'
+                },
+                async () => {
+
+                    await loadMemberPins();
+
+                }
+            )
+
+
+            .subscribe();
+
+}
+
+
+/* =========================================================
+   REFRESH
+   ========================================================= */
+
+async function refreshFromDatabase() {
+
+    await loadIdeas();
+
+    renderIdeas();
+
+    updateStats();
+
+}
+
+
+/* =========================================================
+   AI
+   ========================================================= */
+
+function evaluateAIFit(
+    title,
+    description
+) {
+
+    const text =
+        (
+            title +
+            " " +
+            description
+        ).toLowerCase();
+
+
+    const aiKeywords = [
+
+        'vision',
+        'vit',
+        'yolo',
+        'nlp',
+        'llm',
+        'transformer',
+        'deep learning',
+        'machine learning',
+        'neural',
+        'cnn',
+        'rnn',
+        'opencv',
+        'pytorch',
+        'tensorflow',
+        'تشخيص',
+        'طبي',
+        'رؤية',
+        'لغة',
+        'خوارزميات',
+        'ذكاء',
+        'مرور',
+        'تحليل',
+        'تنبؤ',
+        'تصنيف',
+        'نموذج',
+        'بيانات',
+        'توليد',
+        'صوت',
+        'كشف'
+
+    ];
+
+
+    let matches = 0;
+
+
+    aiKeywords.forEach(
+        kw => {
+
+            if (
+                text.includes(kw)
+            ) {
+
+                matches++;
+
+            }
+
+        }
+    );
+
+
+    const score =
+        Math.min(
+            98,
+            Math.max(
+                65,
+                70 + (
+                    matches * 6
+                )
+            )
+        );
+
+
+    let label =
+        "ممتاز جداً 🌟";
+
+
+    let colorClass =
+        "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20";
+
+
+    let barColor =
+        "bg-emerald-500";
+
+
+    if (score > 90) {
+
+        label =
+            "مثالي لقسم AI 🔥";
+
+        colorClass =
+            "bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20";
+
+        barColor =
+            "bg-violet-600";
+
+    }
+
+    else if (score < 80) {
+
+        label =
+            "جيد جداً 👍";
+
+        colorClass =
+            "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20";
+
+        barColor =
+            "bg-indigo-500";
+
+    }
+
+
+    return {
+        score,
+        label,
+        colorClass,
+        barColor
+    };
+
+}
+
+
+/* =========================================================
+   LOGIN SELECT
+   ========================================================= */
+
+function populateLoginSelect() {
+
+    const el =
+        document.getElementById(
+            'loginUserSelect'
+        );
+
+
+    if (!el) return;
+
+
+    el.innerHTML = '';
+
+
+    const defaultOpt =
+        document.createElement(
+            'option'
+        );
+
+
+    defaultOpt.value = '';
+
+    defaultOpt.disabled = true;
+
+    defaultOpt.selected = true;
+
+    defaultOpt.textContent =
+        'اختر اسمك من القائمة...';
+
+
+    el.appendChild(
+        defaultOpt
+    );
+
+
+    const boysGroup =
+        document.createElement(
+            'optgroup'
+        );
+
+
+    boysGroup.label =
+        'الشباب';
+
+
+    teamMembers
+        .filter(
+            m =>
+                m.gender === 'boy'
+        )
+        .forEach(
+            member => {
+
+                const opt =
+                    document.createElement(
+                        'option'
+                    );
+
+
+                opt.value =
+                    member.name;
+
+
+                opt.textContent =
+                    `${member.icon} ${member.name}`;
+
+
+                opt.className =
+                    'boy-opt';
+
+
+                boysGroup.appendChild(
+                    opt
+                );
+
+            }
+        );
+
+
+    el.appendChild(
+        boysGroup
+    );
+
+
+    const girlsGroup =
+        document.createElement(
+            'optgroup'
+        );
+
+
+    girlsGroup.label =
+        'البنات';
+
+
+    teamMembers
+        .filter(
+            m =>
+                m.gender === 'girl'
+        )
+        .forEach(
+            member => {
+
+                const opt =
+                    document.createElement(
+                        'option'
+                    );
+
+
+                opt.value =
+                    member.name;
+
+
+                opt.textContent =
+                    `${member.icon} ${member.name}`;
+
+
+                opt.className =
+                    'girl-opt';
+
+
+                girlsGroup.appendChild(
+                    opt
+                );
+
+            }
+        );
+
+
+    el.appendChild(
+        girlsGroup
+    );
+
+}
+
+
+/* =========================================================
+   THEME
+   ========================================================= */
+
+function initializeTheme() {
+
+    const savedTheme =
+        localStorage.getItem(
+            'app_theme'
+        );
+
+
+    if (
+        savedTheme === 'light'
+    ) {
+
+        document.documentElement.classList.remove(
+            'dark'
+        );
+
+        document.documentElement.classList.add(
+            'light'
+        );
+
+    }
+
+    else {
+
+        document.documentElement.classList.add(
+            'dark'
+        );
+
+        document.documentElement.classList.remove(
+            'light'
+        );
+
+    }
+
+}
+
+
+function toggleAppTheme() {
+
+    const isDark =
+        document.documentElement.classList.contains(
+            'dark'
+        );
+
+
+    if (isDark) {
+
+        document.documentElement.classList.remove(
+            'dark'
+        );
+
+        document.documentElement.classList.add(
+            'light'
+        );
+
+        localStorage.setItem(
+            'app_theme',
+            'light'
+        );
+
+    }
+
+    else {
+
+        document.documentElement.classList.remove(
+            'light'
+        );
+
+        document.documentElement.classList.add(
+            'dark'
+        );
+
+        localStorage.setItem(
+            'app_theme',
+            'dark'
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+function openLoginModal() {
+
+    populateLoginSelect();
+
+
+    if (currentUser) {
+
+        document.getElementById(
+            'loginUserSelect'
+        ).value =
+            currentUser;
+
+    }
+
+
+    handleMemberSelectChange();
+
+
+    const modal =
+        document.getElementById(
+            'loginModal'
+        );
+
+
+    modal.classList.remove(
+        'hidden'
+    );
+
+    modal.classList.add(
+        'flex'
+    );
+
+}
+
+
+function handleMemberSelectChange() {
+
+    const selectedName =
+        document.getElementById(
+            'loginUserSelect'
+        ).value;
+
+
+    const pinInput =
+        document.getElementById(
+            'loginPinInput'
+        );
+
+
+    const pinHelpText =
+        document.getElementById(
+            'pinHelpText'
+        );
+
+
+    const pinLabel =
+        document.getElementById(
+            'pinLabel'
+        );
+
+
+    pinInput.value = '';
+
+
+    if (!selectedName) {
+
+        pinLabel.innerText =
+            'رمز PIN الخاص بك:';
+
+        pinHelpText.innerText =
+            'اختر اسماً أولاً';
+
+        pinHelpText.className =
+            'block text-[11px] text-slate-400 mt-1.5 text-center font-bold';
+
+        return;
+
+    }
+
+
+    if (
+        memberPins[selectedName]
+    ) {
+
+        pinLabel.innerText =
+            'ادخل رمز PIN الخاص بك:';
+
+        pinInput.placeholder =
+            '••••';
+
+        pinHelpText.innerText =
+            '🔒 هذا الحساب محمي برمز سرّي قام بإنشائه العضو.';
+
+        pinHelpText.className =
+            'block text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 text-center font-bold';
+
+    }
+
+    else {
+
+        pinLabel.innerText =
+            'أنشئ رمز PIN خاص بك لأول مرة:';
+
+        pinInput.placeholder =
+            'اكتب رمزاً من اختيارك';
+
+        pinHelpText.innerText =
+            '✨ هذه أول مرة تسجل بها! اكتب رمزاً خاصاً بك لتحمي حسابك من الانتحال.';
+
+        pinHelpText.className =
+            'block text-[11px] text-emerald-600 dark:text-emerald-400 mt-1.5 text-center font-bold';
+
+    }
+
+}
+
+
+/* =========================================================
+   HASH PIN
+   ========================================================= */
+
+async function hashPin(pin) {
+
+    const encoder =
+        new TextEncoder();
+
+
+    const data =
+        encoder.encode(pin);
+
+
+    const hashBuffer =
+        await crypto.subtle.digest(
+            'SHA-256',
+            data
+        );
+
+
+    const hashArray =
+        Array.from(
+            new Uint8Array(
+                hashBuffer
+            )
+        );
+
+
+    return hashArray
+        .map(
+            b =>
+                b.toString(16).padStart(
+                    2,
+                    '0'
+                )
+        )
+        .join('');
+
+}
+
+
+/* =========================================================
+   LOGIN CONFIRM
+   ========================================================= */
+
+async function confirmLogin() {
+
+    const selectedName =
+        document.getElementById(
+            'loginUserSelect'
+        ).value;
+
+
+    const inputPin =
+        document.getElementById(
+            'loginPinInput'
+        ).value.trim();
+
+
+    if (!selectedName) {
+
+        showToast(
+            'برجاء اختيار اسمك أولاً!',
+            'error'
+        );
+
+        return;
+
+    }
+
+
+    if (!inputPin) {
+
+        showToast(
+            'برجاء كتابة الرمز السري الخاص بك!',
+            'error'
+        );
+
+        return;
+
+    }
+
+
+    const hashedPin =
+        await hashPin(
+            inputPin
+        );
+
+
+    /* NEW ACCOUNT */
+
+    if (
+        !memberPins[selectedName]
+    ) {
+
+        const member =
+            teamMembers.find(
+                m =>
+                    m.name === selectedName
+            );
+
+
+        if (!member) return;
+
+
+        const {
+            data: memberData,
+            error: memberError
+        } =
+            await supabaseClient
+                .from('team_members')
+                .select('id')
+                .eq(
+                    'name',
+                    selectedName
+                )
+                .single();
+
+
+        if (memberError) {
+
+            console.error(
+                memberError
+            );
+
+            showToast(
+                'تعذر العثور على الحساب',
+                'error'
+            );
+
+            return;
+
+        }
+
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from('member_pins')
+                .insert({
+
+                    member_id:
+                        memberData.id,
+
+                    pin_hash:
+                        hashedPin
+
+                });
+
+
+        if (error) {
+
+            console.error(error);
+
+            showToast(
+                'حدث خطأ أثناء إنشاء الحساب',
+                'error'
+            );
+
+            return;
+
+        }
+
+
+        memberPins[selectedName] =
+            hashedPin;
+
+
+        currentUser =
+            selectedName;
+
+
+        localStorage.setItem(
+            'authenticated_user',
+            selectedName
+        );
+
+
+        finishLoginProcess(
+            `تم إنشاء رمزك وتسجيل دخولك كـ ${currentUser} 🎉`
+        );
+
+        return;
+
+    }
+
+
+    /* EXISTING ACCOUNT */
+
+    if (
+        memberPins[selectedName] ===
+        hashedPin
+    ) {
+
+        currentUser =
+            selectedName;
+
+
+        localStorage.setItem(
+            'authenticated_user',
+            selectedName
+        );
+
+
+        finishLoginProcess(
+            `مرحباً بك ${currentUser}! تم تسجيل الدخول بنجاح`
+        );
+
+    }
+
+    else {
+
+        showToast(
+            'الرمز السري غير صحيح لهذا الحساب!',
+            'error'
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   FINISH LOGIN
+   ========================================================= */
+
+function finishLoginProcess(msg) {
+
+    updateUserBadge();
+
+    renderIdeas();
+
+
+    const modal =
+        document.getElementById(
+            'loginModal'
+        );
+
+
+    modal.classList.add(
+        'hidden'
+    );
+
+    modal.classList.remove(
+        'flex'
+    );
+
+
+    showToast(
+        msg,
+        'success'
+    );
+
+}
+
+
+/* =========================================================
+   USER BADGE
+   ========================================================= */
+
+function updateUserBadge() {
+
+    const iconBadge =
+        document.getElementById(
+            'activeUserBadgeIcon'
+        );
+
+
+    const nameBadge =
+        document.getElementById(
+            'activeUserNameText'
+        );
+
+
+    const adminControls =
+        document.getElementById(
+            'adminControlsGroup'
+        );
+
+
+    const authorInput =
+        document.getElementById(
+            'authorName'
+        );
+
+
+    if (currentUser) {
+
+        const member =
+            teamMembers.find(
+                m =>
+                    m.name === currentUser
+            ) || {
+                icon: '👨‍💻'
+            };
+
+
+        iconBadge.innerText =
+            member.icon;
+
+
+        nameBadge.innerText =
+            currentUser;
+
+
+        authorInput.value =
+            `${member.icon} ${currentUser}`;
+
+
+        nameBadge.className =
+            member.gender === 'boy'
+
+                ? 'text-xs font-black text-blue-600 dark:text-blue-400'
+
+                : 'text-xs font-black text-rose-600 dark:text-rose-400';
+
+
+        if (
+            currentUser === 'Wameed'
+        ) {
+
+            adminControls.classList.remove(
+                'hidden'
+            );
+
+            adminControls.classList.add(
+                'flex'
+            );
+
+        }
+
+        else {
+
+            adminControls.classList.add(
+                'hidden'
+            );
+
+            adminControls.classList.remove(
+                'flex'
+            );
+
+        }
+
+    }
+
+    else {
+
+        iconBadge.innerText =
+            '❓';
+
+        nameBadge.innerText =
+            'غير مسجل';
+
+        nameBadge.className =
+            'text-xs font-black text-slate-400';
+
+
+        authorInput.value =
+            '';
+
+
+        adminControls.classList.add(
+            'hidden'
+        );
+
+        adminControls.classList.remove(
+            'flex'
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   RESET IDEAS
+   ========================================================= */
+
+async function confirmResetIdeas() {
+
+    if (
+        currentUser !== 'Wameed'
+    ) {
+
+        showToast(
+            'هذه الخاصية متاحة فقط للمطور Wameed!',
+            'error'
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !confirm(
+            '⚠️ هل أنت متأكد من مسح وإعادة ضبط جميع الأفكار والتصويتات؟'
+        )
+    ) return;
+
+
+    const {
+        error: votesError
+    } =
+        await supabaseClient
+            .from('votes')
+            .delete()
+            .neq(
+                'id',
+                '00000000-0000-0000-0000-000000000000'
+            );
+
+
+    if (votesError) {
+
+        console.error(
+            votesError
+        );
+
+        showToast(
+            'حدث خطأ أثناء حذف التصويتات',
+            'error'
+        );
+
+        return;
+
+    }
+
+
+    const {
+        error: ideasError
+    } =
+        await supabaseClient
+            .from('ideas')
+            .delete()
+            .neq(
+                'id',
+                '00000000-0000-0000-0000-000000000000'
+            );
+
+
+    if (ideasError) {
+
+        console.error(
+            ideasError
+        );
+
+        showToast(
+            'حدث خطأ أثناء حذف الأفكار',
+            'error'
+        );
+
+        return;
+
+    }
+
+
+    await refreshFromDatabase();
+
+
+    showToast(
+        'تمت إعادة ضبط الأفكار والتصويتات 🧹',
+        'info'
+    );
+
+}
+
+
+/* =========================================================
+   RESET ACCOUNTS
+   ========================================================= */
+
+async function confirmResetAccounts() {
+
+    if (
+        currentUser !== 'Wameed'
+    ) {
+
+        showToast(
+            'هذه الخاصية متاحة فقط للمطور Wameed!',
+            'error'
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !confirm(
+            '🚨 هل أنت متأكد من مسح جميع رموز PIN؟'
+        )
+    ) return;
+
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .from('member_pins')
+            .delete()
+            .neq(
+                'member_id',
+                '00000000-0000-0000-0000-000000000000'
+            );
+
+
+    if (error) {
+
+        console.error(error);
+
+        showToast(
+            'حدث خطأ أثناء تصفير الحسابات',
+            'error'
+        );
+
+        return;
+
+    }
+
+
+    memberPins = {};
+
+
+    showToast(
+        'تم تصفير جميع رموز PIN بنجاح 🔑',
+        'info'
+    );
+
+}
+
+
+/* =========================================================
+   SORT
+   ========================================================= */
+
+function setSortMode(mode) {
+
+    currentSort =
+        mode;
+
+
+    const newestBtn =
+        document.getElementById(
+            'sort-newest'
+        );
+
+
+    const votesBtn =
+        document.getElementById(
+            'sort-votes'
+        );
+
+
+    const aiBtn =
+        document.getElementById(
+            'sort-ai'
+        );
+
+
+    const activeClass =
+        'px-4 py-2 rounded-xl bg-violet-600 text-white font-bold transition';
+
+
+    const inactiveClass =
+        'px-4 py-2 rounded-xl text-slate-600 dark:text-slate-400 font-bold transition';
+
+
+    newestBtn.className =
+        mode === 'newest'
+            ? activeClass
+            : inactiveClass;
+
+
+    votesBtn.className =
+        mode === 'votes'
+            ? activeClass
+            : inactiveClass;
+
+
+    aiBtn.className =
+        mode === 'ai'
+            ? activeClass
+            : inactiveClass;
+
+
+    renderIdeas();
+
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+async function handleFormSubmit(e) {
+
+    e.preventDefault();
+
+
+    if (!currentUser) {
+
+        showToast(
+            'يجب تسجيل الدخول أولاً لإضافة فكرة!',
+            'error'
+        );
+
+        openLoginModal();
+
+        return;
+
+    }
+
+
+    const ideaId =
+        document.getElementById(
+            'ideaId'
+        ).value;
+
+
+    const title =
+        document.getElementById(
+            'ideaTitle'
+        ).value.trim();
+
+
+    const description =
+        document.getElementById(
+            'ideaDescription'
+        ).value.trim();
+
+
+    if (
+        !title ||
+        !description
+    ) {
+
+        showToast(
+            'الرجاء استكمال جميع الحقول المطلوبة',
+            'error'
+        );
+
+        return;
+
+    }
+
+
+    /* EDIT */
+
+    if (ideaId) {
+
+        const existingIdea =
+            ideas.find(
+                i =>
+                    i.id === ideaId
+            );
+
+
+        if (!existingIdea) return;
+
+
+        if (
+            existingIdea.author !==
+            currentUser
+        ) {
+
+            showToast(
+                'عذراً، يمكنك تعديل أفكارك فقط!',
+                'error'
+            );
+
+            return;
+
+        }
+
+
+        const {
+            data: memberData,
+            error: memberError
+        } =
+            await supabaseClient
+                .from('team_members')
+                .select('id')
+                .eq(
+                    'name',
+                    currentUser
+                )
+                .single();
+
+
+        if (memberError) {
+
+            showToast(
+                'تعذر تحديد حسابك',
+                'error'
+            );
+
+            return;
+
+        }
+
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from('ideas')
+                .update({
+
+                    title:
+                        title,
+
+                    description:
+                        description,
+
+                    updated_at:
+                        new Date().toISOString()
+
+                })
+                .eq(
+                    'id',
+                    ideaId
+                )
+                .eq(
+                    'author_id',
+                    memberData.id
+                );
+
+
+        if (error) {
+
+            console.error(error);
+
+            showToast(
+                'حدث خطأ أثناء تعديل الفكرة',
+                'error'
+            );
+
+            return;
+
+        }
+
+
+        showToast(
+            'تم تعديل الفكرة بنجاح ✨',
+            'success'
+        );
+
+    }
+
+
+    /* NEW IDEA */
+
+    else {
+
+        const {
+            data: memberData,
+            error: memberError
+        } =
+            await supabaseClient
+                .from('team_members')
+                .select('id')
+                .eq(
+                    'name',
+                    currentUser
+                )
+                .single();
+
+
+        if (memberError) {
+
+            console.error(
+                memberError
+            );
+
+            showToast(
+                'تعذر تحديد حسابك',
+                'error'
+            );
+
+            return;
+
+        }
+
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from('ideas')
+                .insert({
+
+                    author_id:
+                        memberData.id,
+
+                    title:
+                        title,
+
+                    description:
+                        description
+
+                });
+
+
+        if (error) {
+
+            console.error(error);
+
+            showToast(
+                'حدث خطأ أثناء إضافة الفكرة',
+                'error'
+            );
+
+            return;
+
+        }
+
+
+        showToast(
+            'تم تسجيل فكرتك بنجاح 🚀',
+            'success'
+        );
+
+    }
+
+
+    resetForm();
+
+    await refreshFromDatabase();
+
+}
+
+
+/* =========================================================
+   VOTE
+   ========================================================= */
+
+async function toggleVote(ideaId) {
+
+    if (!currentUser) {
+
+        showToast(
+            'يجب تسجيل الدخول أولاً للتصويت!',
+            'error'
+        );
+
+        openLoginModal();
+
+        return;
+
+    }
+
+
+    const idea =
+        ideas.find(
+            i =>
+                i.id === ideaId
+        );
+
+
+    if (!idea) return;
+
+
+    if (
+        idea.author ===
+        currentUser
+    ) {
+
+        showToast(
+            'لا يمكنك التصويت لفكرتك الخاصة! ✋',
+            'error'
+        );
+
+        return;
+
+    }
+
+
+    const {
+        data: memberData,
+        error: memberError
+    } =
+        await supabaseClient
+            .from('team_members')
+            .select('id')
+            .eq(
+                'name',
+                currentUser
+            )
+            .single();
+
+
+    if (memberError) {
+
+        showToast(
+            'تعذر تحديد حسابك',
+            'error'
+        );
+
+        return;
+
+    }
+
+
+    const {
+        data: existingVote,
+        error: voteCheckError
+    } =
+        await supabaseClient
+            .from('votes')
+            .select('id')
+            .eq(
+                'idea_id',
+                ideaId
+            )
+            .eq(
+                'voter_id',
+                memberData.id
+            )
+            .maybeSingle();
+
+
+    if (voteCheckError) {
+
+        console.error(
+            voteCheckError
+        );
+
+        showToast(
+            'حدث خطأ أثناء فحص التصويت',
+            'error'
+        );
+
+        return;
+
+    }
+
+
+    /* REMOVE VOTE */
+
+    if (existingVote) {
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from('votes')
+                .delete()
+                .eq(
+                    'id',
+                    existingVote.id
+                );
+
+
+        if (error) {
+
+            console.error(error);
+
+            showToast(
+                'حدث خطأ أثناء سحب التصويت',
+                'error'
+            );
+
+            return;
+
+        }
+
+
+        showToast(
+            'تم سحب صوتك من الفكرة',
+            'info'
+        );
+
+    }
+
+
+    /* ADD VOTE */
+
+    else {
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from('votes')
+                .insert({
+
+                    idea_id:
+                        ideaId,
+
+                    voter_id:
+                        memberData.id
+
+                });
+
+
+        if (error) {
+
+            console.error(error);
+
+            showToast(
+                'حدث خطأ أثناء تسجيل التصويت',
+                'error'
+            );
+
+            return;
+
+        }
+
+
+        showToast(
+            'تم تسجيل صوتك بنجاح! 👍',
+            'success'
+        );
+
+    }
+
+
+    await refreshFromDatabase();
+
+}
+
+
+/* =========================================================
+   VOTERS MODAL
+   ========================================================= */
+
+function showVotersModal(ideaId) {
+
+    const idea =
+        ideas.find(
+            i =>
+                i.id === ideaId
+        );
+
+
+    if (!idea) return;
+
+
+    const container =
+        document.getElementById(
+            'votersListContainer'
+        );
+
+
+    container.innerHTML = '';
+
+
+    const voters =
+        idea.voters || [];
+
+
+    if (
+        voters.length === 0
+    ) {
+
+        container.innerHTML = `
+            <p class="text-xs text-slate-400 text-center py-4 font-semibold">
+                لا توجد تصويتات على هذه الفكرة بعد.
+            </p>
+        `;
+
+    }
+
+    else {
+
+        voters.forEach(
+            voterName => {
+
+                const memberInfo =
+                    teamMembers.find(
+                        m =>
+                            m.name === voterName
+                    ) || {
+                        icon: '👤',
+                        gender: 'boy'
+                    };
+
+
+                const nameColorClass =
+                    memberInfo.gender === 'boy'
+
+                        ? 'text-blue-600 dark:text-blue-400'
+
+                        : 'text-rose-600 dark:text-rose-400';
+
+
+                const div =
+                    document.createElement(
+                        'div'
+                    );
+
+
+                div.className =
+                    'flex items-center gap-2 p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 text-xs font-bold border dark:border-slate-800 light:border-slate-200';
+
+
+                div.innerHTML =
+                    `
+                    <span>${memberInfo.icon}</span>
+
+                    <span class="${nameColorClass}">
+                        ${escapeHtml(voterName)}
+                    </span>
+                    `;
+
+
+                container.appendChild(
+                    div
+                );
+
+            }
+        );
+
+    }
+
+
+    const modal =
+        document.getElementById(
+            'votersModal'
+        );
+
+
+    modal.classList.remove(
+        'hidden'
+    );
+
+    modal.classList.add(
+        'flex'
+    );
+
+}
+
+
+function closeVotersModal() {
+
+    const modal =
+        document.getElementById(
+            'votersModal'
+        );
+
+
+    modal.classList.add(
+        'hidden'
+    );
+
+    modal.classList.remove(
+        'flex'
+    );
+
+}
+
+
+/* =========================================================
+   EDIT
+   ========================================================= */
+
+function editIdea(id) {
+
+    const item =
+        ideas.find(
+            i =>
+                i.id === id
+        );
+
+
+    if (!item) return;
+
+
+    if (
+        item.author !==
+        currentUser
+    ) {
+
+        showToast(
+            'التعديل متاح فقط لصاحب الفكرة الأصلي!',
+            'error'
+        );
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        'ideaId'
+    ).value =
+        item.id;
+
+
+    const member =
+        teamMembers.find(
+            m =>
+                m.name === item.author
+        ) || {
+            icon: '👨‍💻'
+        };
+
+
+    document.getElementById(
+        'authorName'
+    ).value =
+        `${member.icon} ${item.author}`;
+
+
+    document.getElementById(
+        'ideaTitle'
+    ).value =
+        item.title;
+
+
+    document.getElementById(
+        'ideaDescription'
+    ).value =
+        item.description;
+
+
+    document.getElementById(
+        'btnText'
+    ).innerText =
+        'تحديث الفكرة';
+
+
+    document.getElementById(
+        'cancelEditBtn'
+    ).classList.remove(
+        'hidden'
+    );
+
+
+    document.getElementById(
+        'idea-form-section'
+    ).scrollIntoView({
+        behavior: 'smooth'
+    });
+
+}
+
+
+/* =========================================================
+   RESET FORM
+   ========================================================= */
+
+function resetForm() {
+
+    document.getElementById(
+        'ideaForm'
+    ).reset();
+
+
+    document.getElementById(
+        'ideaId'
+    ).value = '';
+
+
+    document.getElementById(
+        'btnText'
+    ).innerText =
+        'حفظ الفكرة';
+
+
+    document.getElementById(
+        'cancelEditBtn'
+    ).classList.add(
+        'hidden'
+    );
+
+
+    if (currentUser) {
+
+        const member =
+            teamMembers.find(
+                m =>
+                    m.name === currentUser
+            ) || {
+                icon: '👨‍💻'
+            };
+
+
+        document.getElementById(
+            'authorName'
+        ).value =
+            `${member.icon} ${currentUser}`;
+
+    }
+
+}
+
+
+/* =========================================================
+   DELETE
+   ========================================================= */
+
+async function deleteIdea(id) {
+
+    const item =
+        ideas.find(
+            i =>
+                i.id === id
+        );
+
+
+    if (!item) return;
+
+
+    if (
+        item.author !==
+        currentUser
+    ) {
+
+        showToast(
+            'الحذف متاح فقط لصاحب الفكرة الأصلي!',
+            'error'
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !confirm(
+            'هل أنت متأكد من حذف هذه الفكرة نهائياً؟'
+        )
+    ) return;
+
+
+    const {
+        data: memberData,
+        error: memberError
+    } =
+        await supabaseClient
+            .from('team_members')
+            .select('id')
+            .eq(
+                'name',
+                currentUser
+            )
+            .single();
+
+
+    if (memberError) {
+
+        showToast(
+            'تعذر تحديد حسابك',
+            'error'
+        );
+
+        return;
+
+    }
+
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .from('ideas')
+            .delete()
+            .eq(
+                'id',
+                id
+            )
+            .eq(
+                'author_id',
+                memberData.id
+            );
+
+
+    if (error) {
+
+        console.error(error);
+
+        showToast(
+            'حدث خطأ أثناء حذف الفكرة',
+            'error'
+        );
+
+        return;
+
+    }
+
+
+    showToast(
+        'تم حذف الفكرة',
+        'info'
+    );
+
+
+    await refreshFromDatabase();
+
+}
+
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+
+function renderIdeas() {
+
+    const container =
+        document.getElementById(
+            'ideasGrid'
+        );
+
+
+    const emptyState =
+        document.getElementById(
+            'emptyState'
+        );
+
+
+    const search =
+        document.getElementById(
+            'searchInput'
+        ).value
+            .toLowerCase()
+            .trim();
+
+
+    let filtered =
+        ideas.filter(
+            item => {
+
+                const matchesSearch =
+
+                    item.title
+                        .toLowerCase()
+                        .includes(search)
+
+                    ||
+
+                    item.description
+                        .toLowerCase()
+                        .includes(search)
+
+                    ||
+
+                    item.author
+                        .toLowerCase()
+                        .includes(search);
+
+
+                return matchesSearch;
+
+            }
+        );
+
+
+    if (
+        currentSort ===
+        'newest'
+    ) {
+
+        filtered.sort(
+            (a, b) =>
+                new Date(
+                    b.createdAt
+                ) -
+                new Date(
+                    a.createdAt
+                )
+        );
+
+    }
+
+    else if (
+        currentSort ===
+        'votes'
+    ) {
+
+        filtered.sort(
+            (a, b) =>
+                (b.voters?.length || 0) -
+                (a.voters?.length || 0)
+        );
+
+    }
+
+    else if (
+        currentSort ===
+        'ai'
+    ) {
+
+        filtered.sort(
+            (a, b) =>
+
+                evaluateAIFit(
+                    b.title,
+                    b.description
+                ).score
+
+                -
+
+                evaluateAIFit(
+                    a.title,
+                    a.description
+                ).score
+        );
+
+    }
+
+
+    container.innerHTML = '';
+
+
+    if (
+        filtered.length === 0
+    ) {
+
+        emptyState.classList.remove(
+            'hidden'
+        );
+
+        return;
+
+    }
+
+
+    emptyState.classList.add(
+        'hidden'
+    );
+
+
+    filtered.forEach(
+        item => {
+
+            const voters =
+                item.voters || [];
+
+
+            const voteCount =
+                voters.length;
+
+
+            const hasVoted =
+                voters.includes(
+                    currentUser
+                );
+
+
+            const isOwner =
+                currentUser &&
+                item.author ===
+                currentUser;
+
+
+            const authorMember =
+                teamMembers.find(
+                    m =>
+                        m.name ===
+                        item.author
+                ) || {
+                    icon: '💻',
+                    gender: 'boy'
+                };
+
+
+            const dateFormatted =
+                formatDate(
+                    item.createdAt
+                );
+
+
+            const authorColorClass =
+                authorMember.gender ===
+                'boy'
+
+                    ? 'text-blue-600 dark:text-blue-400'
+
+                    : 'text-rose-600 dark:text-rose-400';
+
+
+            const aiEval =
+                evaluateAIFit(
+                    item.title,
+                    item.description
+                );
+
+
+            const cardHTML = `
+
+                <div class="glass-card rounded-3xl p-6 border dark:border-slate-800/80 light:border-slate-200 transition duration-300 flex flex-col justify-between group">
+
+                    <div class="space-y-3">
+
+                        <div class="flex items-center justify-between gap-2 border-b dark:border-slate-800/60 light:border-slate-200 pb-3.5">
+
+                            <div class="flex items-center gap-2.5">
+
+                                <div class="w-9 h-9 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-sm border dark:border-slate-700 light:border-slate-300">
+
+                                    ${authorMember.icon}
+
+                                </div>
+
+
+                                <div>
+
+                                    <div class="flex items-center gap-1.5">
+
+                                        <span class="text-sm font-extrabold ${authorColorClass}">
+
+                                            ${escapeHtml(item.author)}
+
+                                        </span>
+
+
+                                        ${
+                                            isOwner
+
+                                                ? `
+                                                    <span class="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold px-2 py-0.5 rounded-md border border-emerald-500/20">
+
+                                                        فكرتك
+
+                                                    </span>
+                                                `
+
+                                                : ''
+                                        }
+
+                                    </div>
+
+
+                                    <span class="block text-[10px] text-slate-400">
+
+                                        <i class="fa-regular fa-clock ml-1"></i>
+
+                                        ${dateFormatted}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="flex items-center gap-1.5 px-3 py-1 rounded-2xl border text-[11px] font-black ${aiEval.colorClass}">
+
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+
+                                <span>
+                                    AI Match ${aiEval.score}%
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 leading-snug">
+
+                            ${escapeHtml(item.title)}
+
+                        </h3>
+
+
+                        <div class="space-y-1">
+
+                            <div class="flex justify-between items-center text-[10px] font-bold text-slate-500">
+
+                                <span>
+                                    تقييم التوافق مع تخصص الذكاء الاصطناعي:
+                                </span>
+
+                                <span class="font-black text-slate-700 dark:text-slate-300">
+
+                                    ${aiEval.label}
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+
+                                <div class="${aiEval.barColor} h-full rounded-full transition-all duration-500"
+                                     style="width: ${aiEval.score}%">
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-900/60 p-4 rounded-2xl border dark:border-slate-800/80 light:border-slate-200/80 whitespace-pre-line font-medium">
+
+                            ${escapeHtml(item.description)}
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="mt-5 pt-4 border-t dark:border-slate-800/60 light:border-slate-200 flex flex-wrap items-center justify-between gap-3">
+
+                        <div class="flex flex-wrap items-center gap-2">
+
+                            ${
+                                isOwner
+
+                                    ? `
+
+                                        <button disabled
+                                                title="لا يمكنك التصويت لفكرتك الشخصية"
+                                                class="flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed opacity-80 border dark:border-slate-700 light:border-slate-200">
+
+                                            <i class="fa-solid fa-lock"></i>
+
+                                            <span>
+                                                صاحب الفكرة
+                                            </span>
+
+                                        </button>
+
+                                    `
+
+                                    : `
+
+                                        <button onclick="toggleVote('${item.id}')"
+                                                class="flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition active:scale-95 shadow-sm ${
+                                                    hasVoted
+
+                                                        ? 'bg-emerald-600 text-white shadow-emerald-500/20'
+
+                                                        : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-violet-600 hover:text-white'
+                                                }">
+
+                                            <i class="${
+                                                hasVoted
+                                                    ? 'fa-solid fa-thumbs-up'
+                                                    : 'fa-regular fa-thumbs-up'
+                                            }"></i>
+
+                                            <span>
+
+                                                ${
+                                                    hasVoted
+                                                        ? 'صوّت (إلغاء)'
+                                                        : 'تصويت'
+                                                }
+
+                                            </span>
+
+                                        </button>
+
+                                    `
+                            }
+
+
+                            <button onclick="showVotersModal('${item.id}')"
+                                    class="flex items-center gap-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 px-3 py-2 rounded-2xl text-xs font-black border border-amber-500/20 hover:scale-105 transition">
+
+                                <i class="fa-solid fa-fire"></i>
+
+                                <span>
+                                    ${voteCount}
+                                </span>
+
+                            </button>
+
+                        </div>
+
+
+                        <div class="flex items-center gap-1">
+
+                            ${
+                                isOwner
+
+                                    ? `
+
+                                        <button onclick="editIdea('${item.id}')"
+                                                title="تعديل الفكرة"
+                                                class="p-2 text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition">
+
+                                            <i class="fa-regular fa-pen-to-square text-base"></i>
+
+                                        </button>
+
+
+                                        <button onclick="deleteIdea('${item.id}')"
+                                                title="حذف الفكرة"
+                                                class="p-2 text-slate-500 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition">
+
+                                            <i class="fa-regular fa-trash-can text-base"></i>
+
+                                        </button>
+
+                                    `
+
+                                    : `
+
+                                        <span class="text-[10px] text-slate-400 font-bold px-2">
+
+                                            <i class="fa-solid fa-shield text-slate-400 ml-1"></i>
+
+                                            محمية
+
+                                        </span>
+
+                                    `
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            container.insertAdjacentHTML(
+                'beforeend',
+                cardHTML
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   STATS
+   ========================================================= */
+
+function updateStats() {
+
+    document.getElementById(
+        'stat-total'
+    ).innerText =
+        ideas.length;
+
+
+    let topIdea = null;
+
+    let maxVotes = -1;
+
+
+    ideas.forEach(
+        idea => {
+
+            const count =
+                idea.voters?.length || 0;
+
+
+            if (
+                count >
+                maxVotes &&
+                count > 0
+            ) {
+
+                maxVotes =
+                    count;
+
+                topIdea =
+                    idea;
+
+            }
+
+        }
+    );
+
+
+    const topTitleEl =
+        document.getElementById(
+            'stat-top-title'
+        );
+
+
+    const topAuthorEl =
+        document.getElementById(
+            'stat-top-author'
+        );
+
+
+    const topCountEl =
+        document.getElementById(
+            'stat-top-count'
+        );
+
+
+    const tooltipText =
+        document.getElementById(
+            'tooltipText'
+        );
+
+
+    if (topIdea) {
+
+        topTitleEl.innerText =
+            topIdea.title;
+
+
+        tooltipText.innerText =
+            topIdea.title;
+
+
+        topAuthorEl.innerText =
+            `👨‍💻 بواسطة: ${topIdea.author}`;
+
+
+        topCountEl.innerText =
+            `${maxVotes} أصوات`;
+
+    }
+
+    else {
+
+        topTitleEl.innerText =
+            'لا توجد تصويتات بعد';
+
+        tooltipText.innerText =
+            'لا توجد تصويتات مسجلة بعد';
+
+        topAuthorEl.innerText =
+            '';
+
+        topCountEl.innerText =
+            '0 أصوات';
+
+    }
+
+
+    const authorsCount = {};
+
+
+    ideas.forEach(
+        idea => {
+
+            authorsCount[
+                idea.author
+            ] =
+                (
+                    authorsCount[
+                        idea.author
+                    ] || 0
+                ) + 1;
+
+        }
+    );
+
+
+    let maxCount = 0;
+
+
+    Object.values(
+        authorsCount
+    ).forEach(
+        count => {
+
+            if (
+                count >
+                maxCount
+            ) {
+
+                maxCount =
+                    count;
+
+            }
+
+        }
+    );
+
+
+    const topAuthors =
+        Object.keys(
+            authorsCount
+        ).filter(
+            author =>
+                authorsCount[
+                    author
+                ] === maxCount
+        );
+
+
+    const container =
+        document.getElementById(
+            'stat-top-contributors-list'
+        );
+
+
+    container.innerHTML =
+        '';
+
+
+    if (
+        topAuthors.length === 0
+    ) {
+
+        container.innerHTML =
+            `
+                <span class="text-xs font-bold text-slate-400">
+                    -
+                </span>
+            `;
+
+    }
+
+    else {
+
+        topAuthors.forEach(
+            authorName => {
+
+                const memberInfo =
+                    teamMembers.find(
+                        m =>
+                            m.name ===
+                            authorName
+                    ) || {
+                        icon: '👨‍💻',
+                        gender: 'boy'
+                    };
+
+
+                const colorClass =
+                    memberInfo.gender ===
+                    'boy'
+
+                        ? 'text-blue-600 dark:text-blue-400'
+
+                        : 'text-rose-600 dark:text-rose-400';
+
+
+                const badge =
+                    document.createElement(
+                        'span'
+                    );
+
+
+                badge.className =
+                    'inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-2.5 py-1 rounded-xl text-xs font-extrabold';
+
+
+                badge.innerHTML =
+                    `
+                        ${memberInfo.icon}
+
+                        <span class="${colorClass}">
+                            ${escapeHtml(authorName)}
+                        </span>
+
+                        <span class="text-[10px] text-slate-400 font-normal">
+                            (${maxCount})
+                        </span>
+                    `;
+
+
+                container.appendChild(
+                    badge
+                );
+
+            }
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   DATE
+   ========================================================= */
+
+function formatDate(dateString) {
+
+    const date =
+        new Date(
+            dateString
+        );
+
+
+    return date.toLocaleDateString(
+        'ar-EG',
+        {
+            day: 'numeric',
+            month: 'short'
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeHtml(str) {
+
+    return String(str).replace(
+        /[&<>"']/g,
+        function (m) {
+
+            return {
+
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+
+            }[m];
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+function showToast(
+    message,
+    type = 'info'
+) {
+
+    const container =
+        document.getElementById(
+            'toast-container'
+        );
+
+
+    const toast =
+        document.createElement(
+            'div'
+        );
+
+
+    let bg =
+        'bg-slate-900 text-slate-100 border-slate-700';
+
+
+    if (
+        type === 'success'
+    ) {
+
+        bg =
+            'bg-emerald-600 text-white border-emerald-500 shadow-lg shadow-emerald-500/20';
+
+    }
+
+
+    if (
+        type === 'error'
+    ) {
+
+        bg =
+            'bg-rose-600 text-white border-rose-500 shadow-lg shadow-rose-500/20';
+
+    }
+
+
+    toast.className =
+        `flex items-center gap-2 px-4 py-3 rounded-2xl border text-xs font-bold shadow-2xl transition-all transform duration-300 translate-y-2 opacity-0 ${bg}`;
+
+
+    toast.innerHTML =
+        `<span>${escapeHtml(message)}</span>`;
+
+
+    container.appendChild(
+        toast
+    );
+
+
+    setTimeout(
+        () => {
+
+            toast.classList.remove(
+                'translate-y-2',
+                'opacity-0'
+            );
+
+        },
+        10
+    );
+
+
+    setTimeout(
+        () => {
+
+            toast.classList.add(
+                'opacity-0',
+                'translate-y-2'
+            );
+
+
+            setTimeout(
+                () =>
+                    toast.remove(),
+                300
+            );
+
+        },
+        3000
+    );
+
+}
+
+</script>
+
+</body>
+</html>
